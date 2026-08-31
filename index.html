@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css?v=6" />
+<link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <div id="app" class="app">
@@ -61,16 +61,21 @@
           <option value="notes">Has notes</option>
         </select>
       </div>
-      <button id="resetBtn" class="secondary-btn" type="button" title="Clear all obtained checks and notes">Reset progress</button>
+      <div class="control-group button-group">
+        <button id="exportBtn" class="secondary-btn" type="button" title="Download your obtained checks and notes as a backup file">Export</button>
+        <button id="importBtn" class="secondary-btn" type="button" title="Load obtained checks and notes from a backup file">Import</button>
+        <input id="importFileInput" type="file" accept="application/json" hidden />
+        <button id="resetBtn" class="secondary-btn" type="button" title="Clear all obtained checks and notes">Reset progress</button>
+      </div>
     </section>
 
-    <div id="resetOverlay" class="modal-overlay hidden">
-      <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="resetModalTitle">
-        <h2 id="resetModalTitle">Reset all progress?</h2>
-        <p>This clears every obtained check and every note you've entered, for all 1,712 items. This cannot be undone.</p>
+    <div id="confirmOverlay" class="modal-overlay hidden">
+      <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <h2 id="confirmTitle"></h2>
+        <p id="confirmBody"></p>
         <div class="modal-actions">
-          <button id="resetCancelBtn" class="secondary-btn" type="button">Cancel</button>
-          <button id="resetConfirmBtn" class="danger-btn" type="button">Reset everything</button>
+          <button id="confirmCancelBtn" class="secondary-btn" type="button">Cancel</button>
+          <button id="confirmActionBtn" class="danger-btn" type="button">Confirm</button>
         </div>
       </div>
     </div>
@@ -96,6 +101,6 @@
 
   </div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

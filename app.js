@@ -12,9 +12,14 @@ const categoryFilter = document.getElementById('categoryFilter');
 const sourceFilter = document.getElementById('sourceFilter');
 const statusFilter = document.getElementById('statusFilter');
 const resetBtn = document.getElementById('resetBtn');
-const resetOverlay = document.getElementById('resetOverlay');
-const resetCancelBtn = document.getElementById('resetCancelBtn');
-const resetConfirmBtn = document.getElementById('resetConfirmBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFileInput = document.getElementById('importFileInput');
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmBody = document.getElementById('confirmBody');
+const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+const confirmActionBtn = document.getElementById('confirmActionBtn');
 const statObtained = document.getElementById('statObtained');
 const statTotal = document.getElementById('statTotal');
 const statPct = document.getElementById('statPct');
@@ -229,29 +234,111 @@ statusFilter.addEventListener('change', () => {
   render();
 });
 
-resetBtn.addEventListener('click', () => {
-  resetOverlay.classList.remove('hidden');
-});
+let pendingConfirmAction = null;
 
-resetCancelBtn.addEventListener('click', () => {
-  resetOverlay.classList.add('hidden');
-});
+function showConfirm({ title, body, actionLabel, onConfirm }) {
+  confirmTitle.textContent = title;
+  confirmBody.textContent = body;
+  confirmActionBtn.textContent = actionLabel;
+  pendingConfirmAction = onConfirm;
+  confirmOverlay.classList.remove('hidden');
+}
 
-resetOverlay.addEventListener('click', (e) => {
-  if (e.target === resetOverlay) resetOverlay.classList.add('hidden');
+function hideConfirm() {
+  confirmOverlay.classList.add('hidden');
+  pendingConfirmAction = null;
+}
+
+confirmCancelBtn.addEventListener('click', hideConfirm);
+
+confirmOverlay.addEventListener('click', (e) => {
+  if (e.target === confirmOverlay) hideConfirm();
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !resetOverlay.classList.contains('hidden')) {
-    resetOverlay.classList.add('hidden');
+  if (e.key === 'Escape' && !confirmOverlay.classList.contains('hidden')) {
+    hideConfirm();
   }
 });
 
-resetConfirmBtn.addEventListener('click', () => {
-  state = {};
-  saveState();
-  render();
-  resetOverlay.classList.add('hidden');
+confirmActionBtn.addEventListener('click', () => {
+  const action = pendingConfirmAction;
+  hideConfirm();
+  if (action) action();
+});
+
+resetBtn.addEventListener('click', () => {
+  showConfirm({
+    title: 'Reset all progress?',
+    body: `This clears every obtained check and every note you've entered, for all ${items.length.toLocaleString()} items. This cannot be undone.`,
+    actionLabel: 'Reset everything',
+    onConfirm: () => {
+      state = {};
+      saveState();
+      render();
+    },
+  });
+});
+
+exportBtn.addEventListener('click', () => {
+  const payload = {
+    format: 'collection-log-tracker-backup',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    totalItems: items.length,
+    state,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const date = new Date().toISOString().slice(0, 10);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `collection-log-backup-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+importBtn.addEventListener('click', () => {
+  importFileInput.value = '';
+  importFileInput.click();
+});
+
+importFileInput.addEventListener('change', () => {
+  const file = importFileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try {
+      parsed = JSON.parse(reader.result);
+    } catch (e) {
+      alert('That file is not valid JSON.');
+      return;
+    }
+    const importedState = parsed && typeof parsed === 'object' ? parsed.state : null;
+    if (!importedState || typeof importedState !== 'object') {
+      alert("That file doesn't look like a collection log tracker backup.");
+      return;
+    }
+
+    const importedCount = Object.keys(importedState).length;
+    showConfirm({
+      title: 'Import this backup?',
+      body: `This file has progress for ${importedCount.toLocaleString()} item(s)` +
+        (parsed.exportedAt ? ` exported on ${new Date(parsed.exportedAt).toLocaleDateString()}` : '') +
+        `. It will replace your current obtained checks and notes. This cannot be undone.`,
+      actionLabel: 'Import and replace',
+      onConfirm: () => {
+        state = importedState;
+        saveState();
+        render();
+      },
+    });
+  };
+  reader.readAsText(file);
 });
 
 document.querySelectorAll('th.sortable').forEach(th => {

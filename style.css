@@ -136,6 +136,17 @@ html, body {
   min-width: 200px;
 }
 
+.button-group {
+  display: flex;
+  gap: 8px;
+  min-width: 260px;
+}
+
+.button-group .secondary-btn {
+  flex: 1;
+  white-space: nowrap;
+}
+
 input[type="text"], select {
   width: 100%;
   font-family: inherit;
