@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Collection Log Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=6" />
+</head>
+<body>
+  <div id="app" class="app">
+
+    <header class="app-header">
+      <h1>Collection Log Tracker</h1>
+      <p class="subtitle">All 1,712 collection log entries from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki</a>. Check off what you've got, filter, sort, and jot notes &mdash; it all saves locally in your browser.</p>
+    </header>
+
+    <section class="stats-bar">
+      <div class="stat">
+        <span class="stat-value" id="statObtained">0</span>
+        <span class="stat-label">obtained</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statTotal">0</span>
+        <span class="stat-label">total</span>
+      </div>
+      <div class="stat stat-pct">
+        <span class="stat-value" id="statPct">0%</span>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="control-group search-group">
+        <input id="searchInput" type="text" placeholder="Search item or source&hellip;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      </div>
+      <div class="control-group">
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+          <option value="Bosses">Bosses</option>
+          <option value="Raids">Raids</option>
+          <option value="Clues">Clues</option>
+          <option value="Minigames">Minigames</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <select id="sourceFilter">
+          <option value="">All sources</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <select id="statusFilter">
+          <option value="">All items</option>
+          <option value="obtained">Obtained</option>
+          <option value="missing">Missing</option>
+          <option value="notes">Has notes</option>
+        </select>
+      </div>
+      <button id="resetBtn" class="secondary-btn" type="button" title="Clear all obtained checks and notes">Reset progress</button>
+    </section>
+
+    <div id="resetOverlay" class="modal-overlay hidden">
+      <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="resetModalTitle">
+        <h2 id="resetModalTitle">Reset all progress?</h2>
+        <p>This clears every obtained check and every note you've entered, for all 1,712 items. This cannot be undone.</p>
+        <div class="modal-actions">
+          <button id="resetCancelBtn" class="secondary-btn" type="button">Cancel</button>
+          <button id="resetConfirmBtn" class="danger-btn" type="button">Reset everything</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="logTable">
+        <thead>
+          <tr>
+            <th class="col-check"></th>
+            <th class="col-item sortable" data-sort="item">Item</th>
+            <th class="col-comp sortable" data-sort="comp">Comp%</th>
+            <th class="col-notes">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <p id="emptyState" class="empty-state hidden">No items match your filters.</p>
+    </div>
+
+    <footer class="app-footer">
+      Data scraped from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki Collection Log table</a> and refreshed automatically roughly every two weeks. Comp% is the wiki's estimated percentage of WikiSync-tracked players who've obtained that item. Your checks and notes are stored only in this browser (localStorage) &mdash; nothing is uploaded anywhere.
+    </footer>
+
+  </div>
+
+  <script src="app.js?v=4"></script>
+</body>
+</html>

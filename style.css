@@ -1,0 +1,382 @@
+@font-face {
+  font-family: 'RuneScape UF';
+  src: url('assets/fonts/runescape_uf.woff2?v=2') format('woff2'),
+       url('assets/fonts/runescape_uf.ttf?v=2') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0b0e14;
+  --bg-alt: #121724;
+  --card: #161c2b;
+  --card-border: #262f45;
+  --text: #eef1f8;
+  --text-dim: #93a0bd;
+  --accent: #ff8a3d;
+  --accent-2: #4ea1ff;
+  --good: #35c56a;
+  --bad: #ef4757;
+  --row-hover: #1a2233;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'RuneScape UF', var(--font-body);
+  font-synthesis: none; /* RuneScape UF only ships one weight; don't let browsers fake-bold/italic it into a blurry mess */
+}
+
+/* Data-dense areas (the log table's rows and the dropdowns) keep the
+   readable body font; RuneScape UF is decorative and hard to scan in bulk. */
+tbody, select {
+  /* :root is a pseudo-class, so it outranks a plain element selector on
+     specificity alone - !important is needed to actually win here. */
+  font-family: var(--font-body) !important;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin: 0 auto;
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.subtitle a { color: var(--accent-2); }
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 48px;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-pct .stat-value { color: var(--accent); }
+
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-alt);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-2), var(--good));
+  transition: width 0.25s ease;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.control-group {
+  flex: 1;
+  min-width: 140px;
+}
+
+.search-group {
+  flex: 2;
+  min-width: 200px;
+}
+
+input[type="text"], select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-2);
+}
+
+.secondary-btn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid var(--card-border);
+  background: var(--bg-alt);
+  color: var(--text-dim);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.secondary-btn:hover {
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.table-wrap {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-alt);
+  color: var(--text-dim);
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--card-border);
+  z-index: 1;
+}
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--text); }
+
+th.sortable::after {
+  content: '';
+  margin-left: 4px;
+  opacity: 0.4;
+}
+
+th.sortable.sort-asc::after { content: '\25B2'; opacity: 1; color: var(--accent); }
+th.sortable.sort-desc::after { content: '\25BC'; opacity: 1; color: var(--accent); }
+
+tbody tr {
+  border-bottom: 1px solid var(--card-border);
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background: var(--row-hover); }
+
+tbody tr.obtained { background: rgba(53, 197, 106, 0.07); }
+tbody tr.obtained:hover { background: rgba(53, 197, 106, 0.13); }
+
+td {
+  padding: 8px 12px;
+  vertical-align: middle;
+}
+
+.col-check { width: 36px; }
+
+.row-check {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--good);
+}
+
+.item-cell {
+  display: flex;
+  align-items: center;
+}
+
+.item-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.item-link:hover { color: var(--accent-2); }
+
+.item-link img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.item-link span {
+  overflow-wrap: break-word;
+}
+
+.col-comp {
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+.notes-input {
+  width: 100%;
+  min-width: 120px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 5px 7px;
+}
+
+.notes-input:hover { border-color: var(--card-border); }
+
+.notes-input:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  background: var(--bg-alt);
+  color: var(--text);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 32px 16px;
+  margin: 0;
+}
+
+.empty-state.hidden { display: none; }
+
+.app-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.app-footer a { color: var(--accent-2); }
+
+.danger-btn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid var(--bad);
+  background: var(--bad);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.danger-btn:hover { background: #ff5c6c; border-color: #ff5c6c; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 12, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+
+.modal-card p {
+  margin: 0 0 20px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .app { padding: 16px 10px 48px; }
+  .controls { flex-direction: column; }
+  .control-group, .search-group { min-width: 0; }
+
+  table { font-size: 0.82rem; }
+  th, td { padding: 8px 6px; }
+  .col-check { width: 28px; }
+  .item-link img { width: 20px; height: 20px; }
+  .notes-input { min-width: 0; font-size: 0.78rem; padding: 5px 4px; }
+  thead th { font-size: 0.65rem; }
+}
+
+@media (max-width: 400px) {
+  .col-notes { display: none; }
+}
