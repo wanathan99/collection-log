@@ -1,6 +1,12 @@
 const STORAGE_KEY = 'collectionLogProgress.v1';
 const CATEGORIES = ['Bosses', 'Raids', 'Clues', 'Minigames', 'Other'];
 
+// One-time static snapshots (not a live WikiSync integration) - see data/loadouts/.
+const LOADOUTS = [
+  { label: 'lebronathan', file: 'data/loadouts/lebronathan.json' },
+  { label: 'fapital one', file: 'data/loadouts/fapital-one.json' },
+];
+
 let items = [];
 let state = {}; // id -> { obtained: bool, notes: string }
 let sort = { key: null, dir: 1 };
@@ -26,6 +32,7 @@ const statTotal = document.getElementById('statTotal');
 const statPct = document.getElementById('statPct');
 const progressFill = document.getElementById('progressFill');
 const categoryProgress = document.getElementById('categoryProgress');
+const loadoutButtons = document.getElementById('loadoutButtons');
 
 function loadState() {
   try {
@@ -52,6 +59,7 @@ function init() {
     .then(data => {
       items = data;
       populateSourceFilter();
+      populateLoadouts();
       render();
     })
     .catch(err => {
@@ -60,6 +68,48 @@ function init() {
       emptyState.classList.remove('hidden');
       console.error(err);
     });
+}
+
+function populateLoadouts() {
+  loadoutButtons.innerHTML = '';
+  for (const loadout of LOADOUTS) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'loadout-btn';
+    btn.textContent = loadout.label;
+    btn.addEventListener('click', () => applyLoadout(loadout));
+    loadoutButtons.appendChild(btn);
+  }
+}
+
+function applyLoadout(loadout) {
+  fetch(loadout.file, { cache: 'no-store' })
+    .then(r => r.json())
+    .then(parsed => {
+      const loadoutState = parsed && typeof parsed === 'object' ? parsed.state : null;
+      if (!loadoutState || typeof loadoutState !== 'object') {
+        alert(`Couldn't load ${loadout.label}'s loadout.`);
+        return;
+      }
+      const count = Object.keys(loadoutState).length;
+      showConfirm({
+        title: `Load ${loadout.label}'s loadout?`,
+        body: `This sets your obtained checks to match ${loadout.label}'s (${count.toLocaleString()} items), a one-time snapshot rather than a live sync. Your notes are kept as-is; only obtained checkboxes change. This cannot be undone.`,
+        actionLabel: 'Load loadout',
+        onConfirm: () => {
+          const newState = {};
+          for (const item of items) {
+            const existingNotes = (state[item.id] && state[item.id].notes) || '';
+            const obtained = !!(loadoutState[item.id] && loadoutState[item.id].obtained);
+            newState[item.id] = { obtained, notes: existingNotes };
+          }
+          state = newState;
+          saveState();
+          render();
+        },
+      });
+    })
+    .catch(() => alert(`Couldn't load ${loadout.label}'s loadout.`));
 }
 
 function populateSourceFilter() {

@@ -177,6 +177,42 @@ html, body {
   margin-bottom: 16px;
 }
 
+.loadouts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.loadouts-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.loadout-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.loadout-btn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: 1px solid var(--accent-2);
+  background: transparent;
+  color: var(--accent-2);
+  border-radius: 10px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.loadout-btn:hover {
+  background: var(--accent-2);
+  color: var(--bg);
+}
+
 .control-group {
   flex: 1;
   min-width: 140px;
