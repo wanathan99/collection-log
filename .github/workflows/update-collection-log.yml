@@ -2,7 +2,7 @@ name: Update collection log data
 
 on:
   schedule:
-    - cron: "0 6 1,15 * *" # roughly every two weeks
+    - cron: "0 6 * * 4" # every Thursday at 06:00 UTC
   workflow_dispatch: {}
 
 permissions:
