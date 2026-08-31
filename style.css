@@ -119,6 +119,43 @@ html, body {
   transition: width 0.25s ease;
 }
 
+.category-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-row .category-label {
+  width: 76px;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.category-row .progress-track {
+  height: 8px;
+}
+
+.category-row .category-count {
+  width: 64px;
+  flex-shrink: 0;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;

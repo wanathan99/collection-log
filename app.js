@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'collectionLogProgress.v1';
+const CATEGORIES = ['Bosses', 'Raids', 'Clues', 'Minigames', 'Other'];
 
 let items = [];
 let state = {}; // id -> { obtained: bool, notes: string }
@@ -24,6 +25,7 @@ const statObtained = document.getElementById('statObtained');
 const statTotal = document.getElementById('statTotal');
 const statPct = document.getElementById('statPct');
 const progressFill = document.getElementById('progressFill');
+const categoryProgress = document.getElementById('categoryProgress');
 
 function loadState() {
   try {
@@ -201,6 +203,36 @@ function updateStats() {
   statTotal.textContent = total.toLocaleString();
   statPct.textContent = pct + '%';
   progressFill.style.width = pct + '%';
+
+  categoryProgress.innerHTML = '';
+  for (const cat of CATEGORIES) {
+    const catItems = items.filter(i => i.category === cat);
+    const catObtained = catItems.filter(i => getEntry(i.id).obtained).length;
+    const catPct = catItems.length ? Math.round((catObtained / catItems.length) * 1000) / 10 : 0;
+
+    const row = document.createElement('div');
+    row.className = 'category-row';
+
+    const label = document.createElement('span');
+    label.className = 'category-label';
+    label.textContent = cat;
+    row.appendChild(label);
+
+    const track = document.createElement('div');
+    track.className = 'progress-track';
+    const fill = document.createElement('div');
+    fill.className = 'progress-fill';
+    fill.style.width = catPct + '%';
+    track.appendChild(fill);
+    row.appendChild(track);
+
+    const count = document.createElement('span');
+    count.className = 'category-count';
+    count.textContent = `${catObtained}/${catItems.length}`;
+    row.appendChild(count);
+
+    categoryProgress.appendChild(row);
+  }
 }
 
 function updateSortHeaders() {
