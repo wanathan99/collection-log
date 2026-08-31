@@ -366,6 +366,53 @@ td {
   white-space: nowrap;
 }
 
+.col-difficulty, .col-hours {
+  display: none;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+.show-difficulty .col-difficulty,
+.show-difficulty .col-hours {
+  display: table-cell;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  min-width: 22px;
+  text-align: center;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.difficulty-badge.tier-easy { background: rgba(53, 197, 106, 0.18); color: var(--good); }
+.difficulty-badge.tier-medium { background: rgba(255, 138, 61, 0.18); color: var(--accent); }
+.difficulty-badge.tier-hard { background: rgba(239, 71, 87, 0.18); color: var(--bad); }
+
+.difficulty-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+
+.difficulty-toggle input {
+  accent-color: var(--accent-2);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.difficulty-toggle small {
+  color: var(--text-dim);
+  opacity: 0.75;
+}
+
 .notes-input {
   width: 100%;
   min-width: 120px;

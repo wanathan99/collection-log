@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css?v=10" />
+<link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
   <div id="app" class="app">
@@ -74,6 +74,11 @@
       </div>
     </section>
 
+    <label class="difficulty-toggle">
+      <input type="checkbox" id="difficultyToggle" />
+      <span>Show difficulty &amp; hours <small>(community estimates, not official)</small></span>
+    </label>
+
     <section class="loadouts">
       <span class="loadouts-label">Default loadouts:</span>
       <div id="loadoutButtons" class="loadout-buttons"></div>
@@ -97,6 +102,8 @@
             <th class="col-check"></th>
             <th class="col-item sortable" data-sort="item">Item</th>
             <th class="col-comp sortable" data-sort="comp">Comp%</th>
+            <th class="col-difficulty sortable" data-sort="difficulty">Diff.</th>
+            <th class="col-hours sortable" data-sort="activityHours">Hours</th>
             <th class="col-notes">Notes</th>
           </tr>
         </thead>
@@ -106,11 +113,11 @@
     </div>
 
     <footer class="app-footer">
-      Data scraped from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki Collection Log table</a> and refreshed automatically roughly every two weeks. Comp% is the wiki's estimated percentage of WikiSync-tracked players who've obtained that item. Your checks and notes are stored only in this browser (localStorage) &mdash; nothing is uploaded anywhere.
+      Data scraped from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki Collection Log table</a> and refreshed automatically every Thursday. Comp% is the wiki's estimated percentage of WikiSync-tracked players who've obtained that item. Difficulty and hours estimates are a one-time snapshot from the community-maintained Collection Log Adviser spreadsheet, not auto-refreshed, and not available for every item. Your checks and notes are stored only in this browser (localStorage) &mdash; nothing is uploaded anywhere.
     </footer>
 
   </div>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

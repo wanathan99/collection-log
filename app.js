@@ -33,6 +33,10 @@ const statPct = document.getElementById('statPct');
 const progressFill = document.getElementById('progressFill');
 const categoryProgress = document.getElementById('categoryProgress');
 const loadoutButtons = document.getElementById('loadoutButtons');
+const difficultyToggle = document.getElementById('difficultyToggle');
+const logTable = document.getElementById('logTable');
+
+const DIFFICULTY_TOGGLE_KEY = 'collectionLogShowDifficulty';
 
 function loadState() {
   try {
@@ -54,9 +58,21 @@ function getEntry(id) {
 
 function init() {
   loadState();
-  fetch('data/items.json', { cache: 'no-store' })
-    .then(r => r.json())
-    .then(data => {
+
+  difficultyToggle.checked = localStorage.getItem(DIFFICULTY_TOGGLE_KEY) === '1';
+  logTable.classList.toggle('show-difficulty', difficultyToggle.checked);
+
+  Promise.all([
+    fetch('data/items.json', { cache: 'no-store' }).then(r => r.json()),
+    fetch('data/difficulty.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : { items: {} }).catch(() => ({ items: {} })),
+  ])
+    .then(([data, difficultyData]) => {
+      const diffMap = difficultyData.items || {};
+      for (const item of data) {
+        const entry = diffMap[item.id];
+        item.difficulty = entry && entry.difficulty != null ? entry.difficulty : null;
+        item.activityHours = entry && entry.activityHours != null ? entry.activityHours : null;
+      }
       items = data;
       populateSourceFilter();
       populateLoadouts();
@@ -147,7 +163,7 @@ function sortItems(list) {
   return list.slice().sort((a, b) => {
     let av = a[key];
     let bv = b[key];
-    if (key === 'comp') {
+    if (key === 'comp' || key === 'difficulty' || key === 'activityHours') {
       av = av === null || av === undefined ? -1 : av;
       bv = bv === null || bv === undefined ? -1 : bv;
       return (av - bv) * sort.dir;
@@ -212,6 +228,23 @@ function render() {
     compTd.textContent = item.comp === null || item.comp === undefined ? '—' : item.comp.toFixed(1) + '%';
     tr.appendChild(compTd);
 
+    const difficultyTd = document.createElement('td');
+    difficultyTd.className = 'col-difficulty';
+    if (item.difficulty != null) {
+      const badge = document.createElement('span');
+      badge.className = 'difficulty-badge ' + difficultyTier(item.difficulty);
+      badge.textContent = item.difficulty;
+      difficultyTd.appendChild(badge);
+    } else {
+      difficultyTd.textContent = '—';
+    }
+    tr.appendChild(difficultyTd);
+
+    const hoursTd = document.createElement('td');
+    hoursTd.className = 'col-hours';
+    hoursTd.textContent = formatHours(item.activityHours);
+    tr.appendChild(hoursTd);
+
     const notesTd = document.createElement('td');
     notesTd.className = 'col-notes';
     const notesInput = document.createElement('input');
@@ -243,6 +276,18 @@ function setNotes(id, notes) {
   getEntry(id).notes = notes;
   saveState();
   if (filters.status === 'notes') render();
+}
+
+function difficultyTier(difficulty) {
+  if (difficulty <= 3) return 'tier-easy';
+  if (difficulty <= 6) return 'tier-medium';
+  return 'tier-hard';
+}
+
+function formatHours(hours) {
+  if (hours == null) return '—';
+  if (hours < 1) return Math.round(hours * 60) + 'm';
+  return hours.toFixed(1) + 'h';
 }
 
 function updateStats() {
@@ -314,6 +359,11 @@ sourceFilter.addEventListener('change', () => {
 statusFilter.addEventListener('change', () => {
   filters.status = statusFilter.value;
   render();
+});
+
+difficultyToggle.addEventListener('change', () => {
+  logTable.classList.toggle('show-difficulty', difficultyToggle.checked);
+  localStorage.setItem(DIFFICULTY_TOGGLE_KEY, difficultyToggle.checked ? '1' : '0');
 });
 
 let pendingConfirmAction = null;
