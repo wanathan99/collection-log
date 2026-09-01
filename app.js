@@ -71,7 +71,12 @@ function init() {
       for (const item of data) {
         const entry = diffMap[item.id];
         item.difficulty = entry && entry.difficulty != null ? entry.difficulty : null;
+        item.itemHours = entry && entry.itemHours != null ? entry.itemHours : null;
         item.activityHours = entry && entry.activityHours != null ? entry.activityHours : null;
+        item.requiresPrevious = !!(entry && entry.requiresPrevious);
+        // Prefer the per-item hours figure (drop rate / iron KPH); fall back
+        // to the coarser per-activity "time to your next item from here" one.
+        item.hours = item.itemHours != null ? item.itemHours : item.activityHours;
       }
       items = data;
       populateSourceFilter();
@@ -163,7 +168,7 @@ function sortItems(list) {
   return list.slice().sort((a, b) => {
     let av = a[key];
     let bv = b[key];
-    if (key === 'comp' || key === 'difficulty' || key === 'activityHours') {
+    if (key === 'comp' || key === 'difficulty' || key === 'hours') {
       av = av === null || av === undefined ? -1 : av;
       bv = bv === null || bv === undefined ? -1 : bv;
       return (av - bv) * sort.dir;
@@ -242,7 +247,10 @@ function render() {
 
     const hoursTd = document.createElement('td');
     hoursTd.className = 'col-hours';
-    hoursTd.textContent = formatHours(item.activityHours);
+    hoursTd.textContent = formatHours(item.hours) + (item.requiresPrevious ? '*' : '');
+    if (item.requiresPrevious) {
+      hoursTd.title = 'Gated behind a prerequisite item - actual time is likely longer than shown.';
+    }
     tr.appendChild(hoursTd);
 
     const notesTd = document.createElement('td');

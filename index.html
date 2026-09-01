@@ -103,7 +103,7 @@
             <th class="col-item sortable" data-sort="item">Item</th>
             <th class="col-comp sortable" data-sort="comp">Comp%</th>
             <th class="col-difficulty sortable" data-sort="difficulty">Diff.</th>
-            <th class="col-hours sortable" data-sort="activityHours">Hours</th>
+            <th class="col-hours sortable" data-sort="hours">Hours</th>
             <th class="col-notes">Notes</th>
           </tr>
         </thead>
@@ -113,11 +113,11 @@
     </div>
 
     <footer class="app-footer">
-      Data scraped from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki Collection Log table</a> and refreshed automatically every Thursday. Comp% is the wiki's estimated percentage of WikiSync-tracked players who've obtained that item. Difficulty and hours estimates are a one-time snapshot from the community-maintained Collection Log Adviser spreadsheet, not auto-refreshed, and not available for every item. Your checks and notes are stored only in this browser (localStorage) &mdash; nothing is uploaded anywhere.
+      Data scraped from the <a href="https://oldschool.runescape.wiki/w/Collection_log/Table" target="_blank" rel="noopener">OSRS Wiki Collection Log table</a> and refreshed automatically every Thursday. Comp% is the wiki's estimated percentage of WikiSync-tracked players who've obtained that item. Difficulty and hours estimates are a one-time snapshot from the community-maintained Collection Log Adviser spreadsheet (hours = drop-rate attempts &divide; Iron kills-per-hour, on-task rate for slayer bosses), not auto-refreshed, and not available for every item. Items marked with * are gated behind a prerequisite item, so the real time is likely longer than shown. Your checks and notes are stored only in this browser (localStorage) &mdash; nothing is uploaded anywhere.
     </footer>
 
   </div>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
