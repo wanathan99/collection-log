@@ -9,8 +9,8 @@ const LOADOUTS = [
 
 let items = [];
 let state = {}; // id -> { obtained: bool, notes: string }
-let sort = { key: null, dir: 1 };
-let filters = { search: '', category: '', source: '', status: '' };
+let sort = { key: 'hours', dir: 1 };
+let filters = { search: '', category: '', source: '', status: 'missing' };
 
 const tableBody = document.getElementById('tableBody');
 const emptyState = document.getElementById('emptyState');
@@ -61,6 +61,9 @@ function init() {
 
   difficultyToggle.checked = localStorage.getItem(DIFFICULTY_TOGGLE_KEY) === '1';
   logTable.classList.toggle('show-difficulty', difficultyToggle.checked);
+
+  statusFilter.value = filters.status;
+  updateSortHeaders();
 
   Promise.all([
     fetch('data/items.json', { cache: 'no-store' }).then(r => r.json()),
